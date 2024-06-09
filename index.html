@@ -212,10 +212,33 @@
         }
 
         ipcRenderer.on('receive-message', (event, message) => {
+            let botMessageDiv = document.createElement('div');
+            botMessageDiv.classList.add('message', 'bot-message');
+            let messageIconDiv = document.createElement('div');
+            messageIconDiv.classList.add('message-icon');
+            messageIconDiv.innerHTML = '<i class="fas fa-robot"></i>';
+            botMessageDiv.appendChild(messageIconDiv);
+            let messageContentDiv = document.createElement('div');
+            botMessageDiv.appendChild(messageContentDiv);
+            document.getElementById('chat-container').insertAdjacentElement('afterbegin', botMessageDiv);
+
+            let delay = 50;
+            let words = [];
             for (const chunk of message) {
-                const markdownMessage = marked(chunk)
-                document.getElementById('chat-container').insertAdjacentHTML('afterbegin', `<div class="message bot-message"><i class="fas fa-robot message-icon"></i><div>${markdownMessage}</div></div>`)
+                const markedChunk = marked(chunk);
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = markedChunk;
+                words = words.concat(tempDiv.textContent.split(/\s+/));
             }
+
+            let currentText = '';
+            for (const [index, word] of words.entries()) {
+                setTimeout(() => {
+                    currentText += `${word} `;
+                    messageContentDiv.textContent = currentText;
+                }, delay * index);
+            }
+
             const chatContainer = document.getElementById('chat-container')
             chatContainer.scrollTop = 0
         })
