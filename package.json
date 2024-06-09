@@ -1,0 +1,18 @@
+{
+  "name": "Local Copilot",
+  "version": "0.0.1",
+  "description": "a local llm chatbot in building",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "Bharath",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^30.0.7"
+  },
+  "dependencies": {
+    "marked": "^12.0.2",
+    "mica-electron": "^1.5.9"
+  }
+}
