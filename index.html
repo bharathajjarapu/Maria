@@ -1,0 +1,394 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+    
+        #sidebar {
+            width: 250px;
+            background-color: #e9ecef;
+            padding: 20px;
+            overflow-y: auto;
+            flex-shrink: 0;
+            transition: width 0.3s;
+            scrollbar-width: none;
+        }
+    
+        #sidebar.collapsed {
+            width: 60px;
+        }
+    
+        #sidebar h4 {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    
+        #sidebar h4 span {
+            cursor: pointer;
+        }
+    
+        #sidebar.collapsed h4 span {
+            display: none;
+        }
+    
+        #sidebar::-webkit-scrollbar {
+            display: none;
+        }
+    
+        #main {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+    
+        #header {
+            padding: 10px;
+            background-color: #e9ecef;
+            display: flex;
+            justify-content: flex-end;
+        }
+    
+        #chat-container {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background-color: #f5f5f5;
+            display: flex;
+            flex-direction: column-reverse;
+            scrollbar-width: thin;
+            scrollbar-color: #888 #e9ecef;
+        }
+    
+        #chat-container::-webkit-scrollbar {
+            width: 12px;
+        }
+    
+        #chat-container::-webkit-scrollbar-track {
+            background: #e9ecef;
+        }
+    
+        #chat-container::-webkit-scrollbar-thumb {
+            background-color: #888;
+            border-radius: 10px;
+            border: 3px solid #e9ecef;
+        }
+    
+        .dark-mode #chat-container {
+            background-color: #1e1e1e;
+            scrollbar-color: #555 #1e1e1e;
+        }
+    
+        .dark-mode #chat-container::-webkit-scrollbar-track {
+            background: #1e1e1e;
+        }
+    
+        .dark-mode #chat-container::-webkit-scrollbar-thumb {
+            background-color: #555;
+            border: 3px solid #1e1e1e;
+        }
+    
+        #input-container {
+            display: flex;
+            padding: 10px;
+            background-color: #e9ecef;
+        }
+    
+        .message {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            max-width: 60%;
+            word-wrap: break-word;
+            display: flex;
+            align-items: center;
+        }
+    
+        .user-message {
+            background-color: #d1d5db;
+            align-self: flex-end;
+        }
+    
+        .bot-message {
+            background-color: #e9ecef;
+            align-self: flex-start;
+        }
+    
+        .message-icon {
+            margin-right: 10px;
+        }
+    
+        .bot-message p {
+            margin: 0;
+        }
+    
+        .dark-mode #sidebar,
+        .dark-mode #input-container,
+        .dark-mode .bot-message,
+        .dark-mode .user-message,
+        .dark-mode #header {
+            background-color: #2d2d2d;
+            color: #f1f1f1;
+        }
+    
+        .dark-mode .form-control {
+            background-color: #444;
+            color: #fff;
+            border-color: #555;
+        }
+    
+        .dark-mode .form-control::placeholder {
+            color: #ccc;
+        }
+    
+        .dark-mode .btn-primary {
+            background-color: #555;
+            border-color: #666;
+        }
+    
+        .dark-mode .btn-primary:hover {
+            background-color: #666;
+            border-color: #777;
+        }
+    
+        #dark-mode-btn-container {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            background-color: #e9ecef;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+    
+        #dark-mode-btn-container:hover {
+            background-color: #d1d5db;
+        }
+    
+        .dark-mode #dark-mode-btn-container {
+            background-color: #444;
+        }
+    
+        .dark-mode #dark-mode-btn-container:hover {
+            background-color: #555;
+        }
+    
+        #dark-mode-btn {
+            font-size: 1.5em;
+            color: #000;
+        }
+    
+        .dark-mode #dark-mode-btn {
+            color: #fff;
+        }
+        
+        #upload-btn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            margin-left: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        #upload-btn:hover {
+            background-color: #218838;
+        }
+        
+        .dark-mode #upload-btn {
+            background-color: #4caf50;
+        }
+        
+        .dark-mode #upload-btn:hover {
+            background-color: #45a049;
+        }
+
+        #pdf-list {
+            margin-top: 20px;
+        }
+        
+        .pdf-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 5px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+        
+        .dark-mode .pdf-item {
+            background-color: #3a3a3a;
+        }
+        
+        .delete-pdf-btn {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 2px 5px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        
+        .delete-pdf-btn:hover {
+            background-color: #c82333;
+        }
+    </style>    
+</head>
+
+<body class="dark-mode">
+    <div id="sidebar">
+        <h4>
+            <span>Copilot</span>
+            <i class="fas fa-bars" id="toggle-sidebar-btn" style="cursor: pointer;"></i>
+        </h4>
+        <div id="pdf-list">
+            <!-- PDF list will be dynamically loaded here -->
+        </div>
+    </div>
+    <div id="main">
+        <div id="header">
+            <div id="dark-mode-btn-container">
+                <i class="bi bi-moon" id="dark-mode-btn"></i>
+            </div>
+        </div>
+        <div id="chat-container">
+            <!-- Chat messages will be dynamically generated here -->
+        </div>
+        <div id="input-container">
+            <input type="text" class="form-control" id="user-input" placeholder="Type your message...">
+            <button class="btn btn-primary ml-2" type="button" id="send-btn">Send</button>
+            <button class="btn btn-success ml-2" type="button" id="upload-btn">Upload PDF</button>
+            <input type="file" id="file-input" accept=".pdf" style="display: none;">
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/2.1.3/marked.min.js"></script>
+    <script>
+        const { ipcRenderer } = require('electron')
+        document.getElementById('send-btn').addEventListener('click', sendMessage)
+        document.getElementById('user-input').addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') {
+                sendMessage()
+            }
+        })
+
+        function sendMessage() {
+            const userInput = document.getElementById('user-input').value
+            if (userInput) {
+                document.getElementById('chat-container').insertAdjacentHTML('afterbegin', `<div class="message user-message"><i class="fas fa-user message-icon"></i>${userInput}</div>`)
+                document.getElementById('user-input').value = ''
+                ipcRenderer.send('send-message', userInput)
+            }
+        }
+
+        ipcRenderer.on('receive-message', (event, message) => {
+            let botMessageDiv = document.createElement('div');
+            botMessageDiv.classList.add('message', 'bot-message');
+            let messageIconDiv = document.createElement('div');
+            messageIconDiv.classList.add('message-icon');
+            messageIconDiv.innerHTML = '<i class="fas fa-robot"></i>';
+            botMessageDiv.appendChild(messageIconDiv);
+            let messageContentDiv = document.createElement('div');
+            botMessageDiv.appendChild(messageContentDiv);
+            document.getElementById('chat-container').insertAdjacentElement('afterbegin', botMessageDiv);
+
+            let delay = 100;
+            let words = [];
+            for (const chunk of message) {
+                const markedChunk = marked(chunk);
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = markedChunk;
+                words = words.concat(tempDiv.textContent.split(/\s+/));
+            }
+
+            let currentText = '';
+            for (const [index, word] of words.entries()) {
+                setTimeout(() => {
+                    currentText += `${word} `;
+                    messageContentDiv.textContent = currentText;
+                }, delay * index);
+            }
+
+            const chatContainer = document.getElementById('chat-container')
+            chatContainer.scrollTop = 0
+        })
+
+        document.getElementById('dark-mode-btn-container').addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            const darkModeBtn = document.getElementById('dark-mode-btn');
+            if (document.body.classList.contains('dark-mode')) {
+                darkModeBtn.classList.replace('bi-sun', 'bi-moon');
+            } else {
+                darkModeBtn.classList.replace('bi-moon', 'bi-sun');
+            }
+        });
+
+        document.getElementById('toggle-sidebar-btn').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('collapsed')
+        })
+
+        document.getElementById('upload-btn').addEventListener('click', () => {
+            document.getElementById('file-input').click();
+        });
+        
+        document.getElementById('file-input').addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const fileContent = new Uint8Array(e.target.result);
+                    ipcRenderer.send('upload-pdf', fileContent, file.name);
+                };
+                reader.readAsArrayBuffer(file);
+            }
+        });
+        
+        ipcRenderer.on('pdf-processed', (event, filename) => {
+            alert(`PDF "${filename}" processed and added to knowledge base`);
+        });
+
+        ipcRenderer.on('update-pdf-list', (event, pdfs) => {
+            const pdfList = document.getElementById('pdf-list');
+            pdfList.innerHTML = '<h5>Uploaded PDFs:</h5>';
+            pdfs.forEach(pdf => {
+                const pdfItem = document.createElement('div');
+                pdfItem.className = 'pdf-item';
+                pdfItem.innerHTML = `
+                    <span>${pdf}</span>
+                    <button class="delete-pdf-btn" data-filename="${pdf}">Delete</button>
+                `;
+                pdfList.appendChild(pdfItem);
+            });
+
+            // Add event listeners for delete buttons
+            document.querySelectorAll('.delete-pdf-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const filename = e.target.getAttribute('data-filename');
+                    ipcRenderer.send('delete-pdf', filename);
+                });
+            });
+        });
+
+        ipcRenderer.on('pdf-deleted', (event, filename) => {
+            alert(`PDF "${filename}" deleted from knowledge base`);
+        });
+    </script>
+</body>
+
+</html>
